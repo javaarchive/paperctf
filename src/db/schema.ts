@@ -14,6 +14,8 @@ export const users = sqliteTable("user", {
   email: text("email").unique(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
+  disabled: integer({ mode: 'boolean' }).default(false),
+  hidden: integer({ mode: 'boolean' }).default(false),
 })
  
 export const accounts = sqliteTable(
