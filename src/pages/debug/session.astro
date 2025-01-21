@@ -1,0 +1,17 @@
+---
+import AuthMethods from "../../components/core/AuthMethods.astro";
+import DebugContainer from "../../components/core/DebugContainer.astro";
+import Layout from "../../layouts/Layout.astro";
+import globalConfig from "../../lib/config";
+import { getCTFSession } from "../../lib/middleware";
+
+const possibleSession = await getCTFSession(Astro.request);
+// console.log(typeof possibleSession?.user);
+---
+
+<Layout internal={true}>
+    <DebugContainer>
+        <h1>manual session debug</h1>
+        <pre><code>{JSON.stringify(possibleSession, null, 4)}</code></pre>
+    </DebugContainer>
+</Layout>

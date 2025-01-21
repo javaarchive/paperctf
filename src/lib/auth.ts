@@ -1,21 +1,4 @@
-import { loadEnv } from "vite";
-// @ts-ignore
-const isSSR: boolean = import.meta && import.meta["env"] && import.meta.env["SSR"];
-
-if(!isSSR){
-    (await import("dotenv")).config();
-}
-
-export function getEnv(key: string) {
-    // @ts-ignore
-    if(import.meta && import.meta["env"] && key in import.meta.env){
-        // @ts-ignore
-        return import.meta.env[key];
-    }
-    if(typeof process != "undefined" && process.env && key in process.env){
-        return process.env[key];
-    }
-}
+import { getEnv } from "./config";
 
 interface AuthMethod {
     name: string;
@@ -38,3 +21,6 @@ if(getEnv("PUBLIC_GITHUB_CLIENT_ID")){
         }
     });
 }
+
+export default methods;
+export {methods};

@@ -1,0 +1,14 @@
+<script>
+    const { signIn, signOut } = await import("auth-astro/client");
+    document.querySelectorAll("[data-login]").forEach((el) => {
+        el.addEventListener("click", async (ev) => {
+            ev.preventDefault();
+            const loginType = el.getAttribute("data-login");
+            if(loginType == "signOut") {
+                await signOut();
+            }else{
+                await signIn(loginType);
+            }
+        });
+    });
+</script>

@@ -1,0 +1,14 @@
+---
+import { propsToFilename } from 'astro/assets/utils';
+
+interface Props {
+    className?: string;
+    loginType: string;
+}
+
+const className = Astro.props.className || "";
+const loginType = Astro.props.loginType;
+---
+<button class={`${className} login`} data-login={loginType} type="button">
+    <slot />
+</button>

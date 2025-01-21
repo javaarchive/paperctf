@@ -15,6 +15,20 @@
       "when": 1737100080619,
       "tag": "0001_low_blackheart",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1737347388731,
+      "tag": "0002_petite_chameleon",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1737415327195,
+      "tag": "0003_messy_vengeance",
+      "breakpoints": true
     }
   ]
 }

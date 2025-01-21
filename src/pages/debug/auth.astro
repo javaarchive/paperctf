@@ -1,0 +1,13 @@
+---
+import AuthMethods from "../../components/core/AuthMethods.astro";
+import DebugContainer from "../../components/core/DebugContainer.astro";
+import Layout from "../../layouts/Layout.astro";
+import globalConfig from "../../lib/config";
+---
+
+<Layout internal={true}>
+    <DebugContainer>
+        <h1>manual auth debug</h1>
+        <AuthMethods />
+    </DebugContainer>
+</Layout>

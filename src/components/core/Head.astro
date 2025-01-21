@@ -1,0 +1,30 @@
+---
+import globalConfig from '../../lib/config';
+import CustomHead from '../CustomHead.astro';
+import CoreHead from './CoreHead.astro';
+import InternalHead from './InternalHead.astro';
+
+
+interface Props {
+    internal?: boolean;
+    title?: string;
+}
+
+const { internal } = Astro.props;
+
+const showInternal = internal ?? false;
+const showThemed = !showInternal;
+
+if(showInternal && globalConfig.blockInternalPages){
+    Astro.redirect('/404');
+}
+
+---
+<CoreHead title={Astro.props.title} />
+{
+    showThemed && <CustomHead />
+}y
+
+{
+    showInternal && <InternalHead />
+}

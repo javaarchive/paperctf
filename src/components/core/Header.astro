@@ -1,0 +1,21 @@
+---
+import CustomHeader from '../CustomHeader.astro';
+import CoreHeader from './CoreHeader.astro';
+import InternalHeader from './InternalHeader.astro';
+
+interface Props {
+    internal?: boolean;
+}
+
+const { internal } = Astro.props;
+
+const showInternal = internal ?? false;
+const showThemed = !showInternal;
+---
+<CoreHeader />
+{
+    showThemed && <CustomHeader />
+}
+{
+    showInternal && <InternalHeader />
+}

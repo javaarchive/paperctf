@@ -5,6 +5,7 @@ import { int, integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-
 import { createClient } from "@libsql/client"
 import { drizzle } from "drizzle-orm/libsql"
 import type { AdapterAccountType } from "@auth/core/adapters"
+import { relations } from "drizzle-orm";
  
 export const users = sqliteTable("user", {
   id: text("id")
@@ -16,7 +17,10 @@ export const users = sqliteTable("user", {
   image: text("image"),
   disabled: integer({ mode: 'boolean' }).default(false),
   hidden: integer({ mode: 'boolean' }).default(false),
+  teamId: text("teamId")
 })
+
+export type User = typeof users.$inferSelect;
  
 export const accounts = sqliteTable(
   "account",
@@ -86,3 +90,23 @@ export const authenticators = sqliteTable(
     }),
   })
 )
+
+export const teams = sqliteTable("team", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  hidden: integer({ mode: 'boolean' }).default(false),
+  joinCode: text("joinCode").unique().$defaultFn(() => crypto.randomUUID()),
+});
+
+export type Team = typeof teams.$inferSelect;
+
+export const teamsRelations = relations(users, ({ one }) => ({
+  team: one(teams, {
+    fields: [users.teamId],
+    references: [teams.id],
+  })
+}));
+
+export const teamUsersRelations = relations(teams, ({many}) => ({
+  users: many(users),
+}));

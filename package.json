@@ -6,7 +6,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "drizzle-update": "drizzle-kit generate",
+    "drizzle-push": "drizzle-kit push",
+    "drizzle-migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@astrojs/node": "^9.0.0",

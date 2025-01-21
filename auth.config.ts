@@ -3,8 +3,9 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { defineConfig } from 'auth-astro'
 import { db } from './src/lib/db'
 import type { Provider } from '@auth/core/providers';
-import { getAuthMethod, getEnv } from './src/lib/auth';
+import { getAuthMethod } from './src/lib/auth';
 import { accounts, users, sessions, verificationTokens } from './src/db/schema';
+import { getEnv } from './src/lib/config';
 
 let providers: Provider[] = [];
 
@@ -24,4 +25,16 @@ export default defineConfig({
         sessionsTable: sessions,
         verificationTokensTable: verificationTokens,
     }),
+    callbacks: {
+        session(userInfo){
+            // console.log(userInfo);
+            const {session, token} = userInfo;
+            if (session.user && token && !session.user.id && token.provider_id) {
+                // makes discord work for some reason
+                // @ts-ignore
+                session.providerId = token.provider_id;
+            }
+            return session;
+        }
+    }
 })

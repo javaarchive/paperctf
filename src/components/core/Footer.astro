@@ -1,0 +1,21 @@
+---
+import CustomFooter from '../CustomFooter.astro';
+import CoreFooter from './CoreFooter.astro';
+import InternalFooter from './InternalFooter.astro';
+
+interface Props {
+    internal?: boolean;
+}
+
+const { internal } = Astro.props;
+
+const showInternal = internal ?? false;
+const showThemed = !showInternal;
+---
+<CoreFooter />
+{
+    showThemed && <CustomFooter />
+}
+{
+    showInternal && <InternalFooter />
+}

@@ -1,0 +1,19 @@
+---
+import methods from '../../lib/auth';
+import AuthButton from './AuthButton.astro';
+
+interface Props {
+    className?: string;
+    buttonClassName?: string;
+}
+const className = Astro.props.className || "";
+const buttonClassName = Astro.props.buttonClassName || "";
+---
+
+<div class={className}>
+    {
+        methods.map((method) => {
+            return <AuthButton loginType={method.id} className={buttonClassName}>{method.name}</AuthButton>
+        })
+    }
+</div>
