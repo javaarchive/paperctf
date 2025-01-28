@@ -5,9 +5,11 @@ import auth from 'auth-astro';
 
 import node from '@astrojs/node';
 
+import mdx from '@astrojs/mdx';
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [auth()],
+  integrations: [auth(), mdx()],
 
   adapter: node({
     mode: 'standalone'

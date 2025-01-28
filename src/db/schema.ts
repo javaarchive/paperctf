@@ -1,5 +1,5 @@
 import { db } from "../lib/db";
-import { int, integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core";
+import { int, integer, sqliteTable, text, primaryKey, unique } from "drizzle-orm/sqlite-core";
 
 // begin accounts schema
 import { createClient } from "@libsql/client"
@@ -92,10 +92,11 @@ export const authenticators = sqliteTable(
 )
 
 export const teams = sqliteTable("team", {
-  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey(), // .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   hidden: integer({ mode: 'boolean' }).default(false),
   joinCode: text("joinCode").unique().$defaultFn(() => crypto.randomUUID()),
+  calculatedPoints: integer("calculatedPoints").notNull().default(0),
 });
 
 export type Team = typeof teams.$inferSelect;
@@ -109,4 +110,37 @@ export const teamsRelations = relations(users, ({ one }) => ({
 
 export const teamUsersRelations = relations(teams, ({many}) => ({
   users: many(users),
+}));
+
+export const challengeSubmissions = sqliteTable("challenge_submission", {
+  teamId: text("teamId").notNull(),
+  type: text("type").notNull(),
+  answer: text("answer").notNull(),
+  challengeId: text("challengeId").notNull(),
+  rawScore: integer("rawScore").notNull(),
+  correct: integer({ mode: 'boolean' }).notNull(),
+  submissionId: text("submissionId").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  submittedAt: integer("submittedAt", { mode: "timestamp_ms" }).notNull(),
+});
+
+export type ChallengeSubmission = typeof challengeSubmissions.$inferSelect;
+
+export const challengeAttemptState  = sqliteTable("challenge_attempt_state", {
+  teamId: text("teamId").notNull(),
+  challengeId: text("challengeId").notNull(),
+  attemptId: text("attemptId").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  bestSubmissionId: text("bestSubmissionId").notNull(),
+  finalScore: integer("finalScore").notNull(), // this can be a score after some postprocessing, e.g. dynamic scoring
+}, (t) => ({
+  unq: unique().on(t.teamId, t.challengeId),
+}));
+
+export type ChallengeAttemptState = typeof challengeAttemptState.$inferSelect;
+export type ChallengeAttemptStateCreate = typeof challengeAttemptState.$inferInsert;
+
+export const challengeAttemptRelations = relations(challengeAttemptState, ({one}) => ({
+  bestSubmission: one(challengeSubmissions, {
+    fields: [challengeAttemptState.bestSubmissionId],
+    references: [challengeSubmissions.challengeId],
+  }),
 }));
