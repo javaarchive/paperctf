@@ -117,7 +117,7 @@ export const challengeSubmissions = sqliteTable("challenge_submission", {
   type: text("type").notNull(),
   answer: text("answer").notNull(),
   challengeId: text("challengeId").notNull(),
-  rawScore: integer("rawScore").notNull(),
+  rawScore: integer("rawScore").notNull(), // preprostprocessing
   correct: integer({ mode: 'boolean' }).notNull(),
   submissionId: text("submissionId").primaryKey().$defaultFn(() => crypto.randomUUID()),
   submittedAt: integer("submittedAt", { mode: "timestamp_ms" }).notNull(),

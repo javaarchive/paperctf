@@ -164,19 +164,24 @@ export class CTFChallenge {
     }
 
     async update(tx: any){ // TODO: find type of tx
-        const submissions = await tx.select().from(challengeSubmissions).where(and(eq(challengeSubmissions.challengeId, this.id), eq(challengeSubmissions.correct, true)));
-        const solveCount = submissions.length;
+        // test
+        // (await db.select().from(challengeAttemptState).where(eq(challengeAttemptState.challengeId, this.id))).join()
+        // get final submission states
+        const submissionStates = await tx.select().from(challengeAttemptState).leftJoin(challengeSubmissions, eq(challengeAttemptState.bestSubmissionId, challengeSubmissions.submissionId)).where(eq(challengeAttemptState.challengeId, this.id));
+        const solveCount = submissionStates.length;
         const ctfTeams: CTFTeam[] = [];
-        for(let submission of submissions){
-            const finalScore = this.calculatePoints(submission.rawScore, solveCount);
+        for(let submissionState of submissionStates){
+            const submissionID = submissionState.bestSubmissionId;
+            const bestSubmission = submissionState.challengeSubmissions;
+            const finalScore = this.calculatePoints(bestSubmission.rawScore, solveCount);
+            // update the overall state
             await tx.update(challengeSubmissions).set({
                 finalScore: finalScore,
-            });
+            }).where(eq(challengeAttemptState.bestSubmissionId, submissionID));
             // TODO: optimizze query?
-            const teamData = (await tx.select().from(teams).where(eq(teams.id, submission.teamId)))[0];
+            const teamData = (await tx.select().from(teams).where(eq(teams.id, submissionState.teamId)))[0];
             ctfTeams.push(new CTFTeam(teamData));
         }
-        
     }
 }
 
@@ -216,7 +221,7 @@ export class CTFChallengeSubmission {
                 }
             }
 
-            await tx.update(challengeAttemptState).set({
+            await tx.update(challengeAttemptState).where(eq(challengeAttemptState.attemptId, attempt.id)).set({
                 bestSubmissionId: this.submission.submissionId,
             });
         });
@@ -244,5 +249,9 @@ export class CTFChallengeAttempt {
             if(!attemptData) throw new Error("this shouldn't happen, attempt could not be found or created");
             return new CTFChallengeAttempt(attemptData);
         }
+    }
+
+    get id() {
+        return this.attempt.attemptId;
     }
 }
